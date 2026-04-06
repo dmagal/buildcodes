@@ -1,101 +1,115 @@
-import Image from "next/image";
+import Link from 'next/link';
+import { getPartsList, PartSummary } from '@/lib/data';
+import SearchBar from '@/components/SearchBar';
 
-export default function Home() {
+const PART_DESCRIPTIONS: Record<string, string> = {
+  '1':  'General compliance, definitions, and referenced documents',
+  '2':  'Objectives of the building code',
+  '3':  'Functional statements for all building types',
+  '4':  'Structural loads, foundations, and engineering requirements',
+  '5':  'Walls, roofs, and moisture management',
+  '6':  'Heating, ventilation, and air conditioning (HVAC)',
+  '7':  'Plumbing systems, fixtures, and drainage',
+  '8':  'Sewage systems and septic design',
+  '9':  'Houses, additions, cottages, and small buildings',
+  '10': 'Change of use and occupancy requirements',
+  '11': 'Renovation and heritage building requirements',
+  '12': 'Energy efficiency and resource conservation',
+};
+
+const SUGGESTIONS = [
+  'deck railing height',
+  'basement ceiling height',
+  'egress window',
+  'fire separation',
+  'stair rise and run',
+  'smoke alarm',
+  'secondary suite',
+  'minimum ceiling height',
+  'fire alarm requirements',
+];
+
+export default function HomePage() {
+  const parts = getPartsList();
+  const totalArticles = parts.reduce((sum: number, p: PartSummary) => sum + p.articleCount, 0);
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div>
+      {/* ── Hero ── */}
+      <section className="bg-[#1a3a5c] text-white py-14 px-4">
+        <div className="max-w-3xl mx-auto text-center">
+          <div className="inline-block bg-blue-500/20 text-blue-200 text-xs font-semibold px-3 py-1 rounded-full mb-4 tracking-wide uppercase">
+            Updated to 2024 Code · Effective Jan 1, 2025
+          </div>
+          <h1 className="text-3xl sm:text-4xl font-bold mb-3">
+            Ontario Building Code 2024
+          </h1>
+          <p className="text-blue-200 text-lg mb-8">
+            {totalArticles.toLocaleString()} articles. Free, searchable, mobile-friendly.
+          </p>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+          <SearchBar />
+
+          <div className="mt-4 flex flex-wrap justify-center gap-2">
+            {SUGGESTIONS.map((s) => (
+              <Link
+                key={s}
+                href={`/search?q=${encodeURIComponent(s)}`}
+                className="text-xs bg-white/10 hover:bg-white/20 text-blue-100 px-3 py-1.5 rounded-full transition-colors"
+              >
+                {s}
+              </Link>
+            ))}
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </section>
+
+      {/* ── Parts grid ── */}
+      <section className="max-w-6xl mx-auto px-4 py-12">
+        <h2 className="text-xl font-semibold text-slate-700 mb-6">Browse by Part</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {parts.map((p: PartSummary) => {
+            const isPart9 = p.part === '9';
+            return (
+              <Link
+                key={p.part}
+                href={`/part-${p.part}`}
+                className={`part-card group relative ${
+                  isPart9
+                    ? 'border-blue-400 ring-1 ring-blue-300 bg-blue-50/50'
+                    : ''
+                }`}
+              >
+                {isPart9 && (
+                  <span className="absolute top-3 right-3 text-xs font-semibold text-blue-700 bg-blue-100 px-2 py-0.5 rounded-full">
+                    Most Popular
+                  </span>
+                )}
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <span className={`text-xs font-mono font-semibold px-2 py-0.5 rounded ${
+                    isPart9 ? 'text-blue-700 bg-blue-100' : 'text-blue-600 bg-blue-50'
+                  }`}>
+                    Part {p.part}
+                  </span>
+                  <span className="text-xs text-slate-400 mr-16">
+                    {p.articleCount.toLocaleString()} articles
+                  </span>
+                </div>
+                <h3 className={`font-semibold leading-snug transition-colors ${
+                  isPart9
+                    ? 'text-blue-900 group-hover:text-blue-700'
+                    : 'text-slate-800 group-hover:text-blue-700'
+                }`}>
+                  {p.partTitle}
+                </h3>
+                <p className="text-sm text-slate-500 mt-1 leading-snug">
+                  {PART_DESCRIPTIONS[p.part] ?? ''}
+                </p>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
     </div>
   );
 }

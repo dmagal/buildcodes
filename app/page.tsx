@@ -69,37 +69,21 @@ export default function HomePage() {
         <h2 className="text-xl font-semibold text-slate-700 mb-6">Browse by Part</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {parts.map((p: PartSummary) => {
-            const isPart9 = p.part === '9';
             return (
               <Link
                 key={p.part}
                 href={`/part-${p.part}`}
-                className={`part-card group relative ${
-                  isPart9
-                    ? 'border-blue-400 ring-1 ring-blue-300 bg-blue-50/50'
-                    : ''
-                }`}
+                className="part-card group relative"
               >
-                {isPart9 && (
-                  <span className="absolute top-3 right-3 text-xs font-semibold text-blue-700 bg-blue-100 px-2 py-0.5 rounded-full">
-                    Most Popular
-                  </span>
-                )}
                 <div className="flex items-start justify-between gap-2 mb-2">
-                  <span className={`text-xs font-mono font-semibold px-2 py-0.5 rounded ${
-                    isPart9 ? 'text-blue-700 bg-blue-100' : 'text-blue-600 bg-blue-50'
-                  }`}>
+                  <span className="text-xs font-mono font-semibold px-2 py-0.5 rounded text-blue-600 bg-blue-50">
                     Part {p.part}
                   </span>
-                  <span className="text-xs text-slate-400 mr-16">
+                  <span className="text-xs text-slate-400">
                     {p.articleCount.toLocaleString()} articles
                   </span>
                 </div>
-                <h3 className={`font-semibold leading-snug transition-colors ${
-                  isPart9
-                    ? 'text-blue-900 group-hover:text-blue-700'
-                    : 'text-slate-800 group-hover:text-blue-700'
-                }`}>
+                <h3 className="font-semibold leading-snug transition-colors text-slate-800 group-hover:text-blue-700">
                   {p.partTitle}
                 </h3>
                 <p className="text-sm text-slate-500 mt-1 leading-snug">

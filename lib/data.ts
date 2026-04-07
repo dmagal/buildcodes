@@ -4,6 +4,8 @@
 import fs from 'fs';
 import path from 'path';
 import { Part, Section, Article, ArticleSearchResult } from './types';
+import { sectionSlug } from './slugs';
+export { sectionSlug, slugToSectionId, partNumFromSectionSlug } from './slugs';
 
 // ── Load raw data ─────────────────────────────────────────────────────────────
 
@@ -68,7 +70,7 @@ export function getSectionsList(partNum: string): SectionSummary[] {
   return part.sections.map((sec) => ({
     id: sec.id,
     title: sec.title,
-    slug: sectionSlug(sec.id),
+    slug: sectionSlug(sec.id, sec.title),
     articleCount: sec.subsections.reduce((a, sub) => a + (sub.articles?.length ?? 0), 0),
     subsectionCount: sec.subsections.length,
   }));
@@ -93,31 +95,13 @@ export function getArticle(articleId: string): Article | undefined {
 }
 
 // ── Slug helpers ──────────────────────────────────────────────────────────────
-
-// "9.8"     → "section-9-8"
-export function sectionSlug(sectionId: string): string {
-  return `section-${sectionId.replace(/\./g, '-')}`;
-}
-
-// "section-9-8" → "9.8"
-export function slugToSectionId(slug: string | undefined): string {
-  if (!slug) return '';
-  return slug.replace(/^section-/, '').replace(/-/g, '.');
-}
-
-// Derive the part number from a section slug — e.g. "section-9-8" → "9"
-export function partNumFromSectionSlug(slug: string): string {
-  return slug.replace(/^section-/, '').split('-')[0];
-}
+// sectionSlug, slugToSectionId, partNumFromSectionSlug are re-exported from ./slugs
 
 // "9.8.8.1" → "9-8-8-1"  (used as HTML anchor IDs)
 export function articleAnchor(articleId: string): string {
   return articleId.replace(/\./g, '-');
 }
 
-export function articleUrl(partNum: string, sectionId: string, articleId: string): string {
-  return `/part-${partNum}/${sectionSlug(sectionId)}#${articleAnchor(articleId)}`;
-}
 
 // ── Flat article list for search ──────────────────────────────────────────────
 
@@ -143,7 +127,7 @@ export function getSearchList(): ArticleSearchResult[] {
             subsectionTitle: sub.title,
             tags: article.tags ?? [],
             textSnippet: firstSentence.slice(0, 200),
-            url: articleUrl(part.part, sec.id, article.id),
+            url: `/part-${part.part}/${sectionSlug(sec.id, sec.title)}#${articleAnchor(article.id)}`,
           });
         }
       }
@@ -164,7 +148,7 @@ export function getAllSectionSlugs(): { partNum: string; sectionSlug: string }[]
   const result: { partNum: string; sectionSlug: string }[] = [];
   for (const part of getParts()) {
     for (const sec of part.sections) {
-      result.push({ partNum: part.part, sectionSlug: sectionSlug(sec.id) });
+      result.push({ partNum: part.part, sectionSlug: sectionSlug(sec.id, sec.title) });
     }
   }
   return result;

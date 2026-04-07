@@ -2,6 +2,7 @@
 
 import Fuse from 'fuse.js';
 import { ArticleSearchResult } from './types';
+import { sectionSlug } from './slugs';
 
 let fuse: Fuse<ArticleSearchResult> | null = null;
 // loadPromise is set exactly once and resolves when fuse is ready (or failed)
@@ -29,7 +30,7 @@ async function initFuse(): Promise<void> {
             subsectionTitle: sub.title,
             tags: article.tags ?? [],
             textSnippet: firstSentence.slice(0, 200),
-            url: `/part-${part.part}/section-${sec.id.replace(/\./g, '-')}#${article.id.replace(/\./g, '-')}`,
+            url: `/part-${part.part}/${sectionSlug(sec.id, sec.title)}#${article.id.replace(/\./g, '-')}`,
           });
         }
       }

@@ -15,6 +15,9 @@ export const metadata: Metadata = {
     siteName: 'BuildCodes.ca',
     url: 'https://buildcodes.ca',
   },
+  verification: {
+    google: 'BpbgAOMvfibYQWdmOMic6NeYQl4vESnoozRl169joT4',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

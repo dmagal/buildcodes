@@ -140,6 +140,7 @@ export default function SectionPage({ params }: Props) {
                         <div className="mt-4 pt-3 border-t border-slate-100 flex flex-wrap gap-1.5">
                           {article.tags.map((tag: string) => (
                             <Link key={tag} href={`/search?q=${encodeURIComponent(tag)}`}
+                                  rel="nofollow"
                                   className="text-xs text-slate-500 bg-slate-100 hover:bg-blue-50 hover:text-blue-600 px-2 py-0.5 rounded-full transition-colors">
                               {tag}
                             </Link>

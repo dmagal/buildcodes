@@ -2,40 +2,17 @@
 
 import Fuse from 'fuse.js';
 import { ArticleSearchResult } from './types';
-import { sectionSlug } from './slugs';
 
 let fuse: Fuse<ArticleSearchResult> | null = null;
 // loadPromise is set exactly once and resolves when fuse is ready (or failed)
 let loadPromise: Promise<void> | null = null;
 
 async function initFuse(): Promise<void> {
-  const res = await fetch('/data/volume1-parsed.json');
+  // Slim index generated at build time by app/data/search-index.json/route.ts.
+  // The full parsed code (data/volume1-parsed.json) never ships to the browser.
+  const res = await fetch('/data/search-index.json');
   if (!res.ok) throw new Error(`Failed to fetch search data: ${res.status}`);
-  const data = await res.json();
-
-  const records: ArticleSearchResult[] = [];
-  for (const part of data.parts) {
-    for (const sec of part.sections ?? []) {
-      for (const sub of sec.subsections ?? []) {
-        for (const article of sub.articles ?? []) {
-          const firstSentence = article.sentences?.[0]?.text ?? '';
-          records.push({
-            articleId: article.id,
-            title: article.title,
-            partNum: part.part,
-            partTitle: part.partTitle,
-            sectionId: sec.id,
-            sectionTitle: sec.title,
-            subsectionId: sub.id,
-            subsectionTitle: sub.title,
-            tags: article.tags ?? [],
-            textSnippet: firstSentence.slice(0, 200),
-            url: `/part-${part.part}/${sectionSlug(sec.id, sec.title)}#${article.id.replace(/\./g, '-')}`,
-          });
-        }
-      }
-    }
-  }
+  const records: ArticleSearchResult[] = await res.json();
 
   fuse = new Fuse(records, {
     keys: [

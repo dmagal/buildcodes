@@ -10,7 +10,7 @@ export { sectionSlug, slugToSectionId, partNumFromSectionSlug } from './slugs';
 // ── Load raw data ─────────────────────────────────────────────────────────────
 
 function loadParts(): Part[] {
-  const filePath = path.join(process.cwd(), 'public/data/volume1-parsed.json');
+  const filePath = path.join(process.cwd(), 'data/volume1-parsed.json');
   const raw = fs.readFileSync(filePath, 'utf-8');
   const data = JSON.parse(raw);
   return data.parts as Part[];

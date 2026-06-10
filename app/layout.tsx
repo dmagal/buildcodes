@@ -5,6 +5,9 @@ import './globals.css';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://buildcodes.ca'),
+  alternates: {
+    canonical: './',
+  },
   title: {
     default: 'BuildCodes.ca — Ontario Building Code 2024',
     template: '%s — BuildCodes.ca',

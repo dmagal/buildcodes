@@ -17,16 +17,18 @@ const PART_DESCRIPTIONS: Record<string, string> = {
   '12': 'Energy efficiency and resource conservation',
 };
 
-const SUGGESTIONS = [
-  'deck railing height',
-  'basement ceiling height',
-  'egress window',
-  'fire separation',
-  'stair rise and run',
-  'smoke alarm',
-  'secondary suite',
-  'minimum ceiling height',
-  'fire alarm requirements',
+// Popular topics, linked straight to the relevant code provision so they pass
+// crawlable, keyword-rich internal links (search fallback only when no single
+// provision fits the topic).
+const SUGGESTIONS: { label: string; href: string; search?: boolean }[] = [
+  { label: 'deck railing height', href: '/part-9/9-8-stairs-ramps-handrails-and-guards/#9-8-8-3' },
+  { label: 'basement ceiling height', href: '/part-9/9-5-design-of-areas-spaces-and-doorways/#9-5-3-1' },
+  { label: 'egress window', href: '/part-9/9-9-means-of-egress/#9-9-10-1' },
+  { label: 'fire separation', href: '/part-9/9-10-fire-protection/#sub-9-10-9' },
+  { label: 'stair rise and run', href: '/part-9/9-8-stairs-ramps-handrails-and-guards/#sub-9-8-4' },
+  { label: 'smoke alarm', href: '/part-9/9-10-fire-protection/#9-10-19-1' },
+  { label: 'secondary suite', href: '/search?q=secondary%20suite', search: true },
+  { label: 'fire alarm requirements', href: '/part-9/9-10-fire-protection/#sub-9-10-18' },
 ];
 
 export default function HomePage() {
@@ -53,12 +55,12 @@ export default function HomePage() {
           <div className="mt-4 flex flex-wrap justify-center gap-2">
             {SUGGESTIONS.map((s) => (
               <Link
-                key={s}
-                href={`/search?q=${encodeURIComponent(s)}`}
-                rel="nofollow"
+                key={s.label}
+                href={s.href}
+                rel={s.search ? 'nofollow' : undefined}
                 className="text-xs bg-white/10 hover:bg-white/20 text-blue-100 px-3 py-1.5 rounded-full transition-colors"
               >
-                {s}
+                {s.label}
               </Link>
             ))}
           </div>

@@ -1,9 +1,11 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import { getPart, getSection, getAllSectionSlugs, slugToSectionId, partNumFromSectionSlug, articleAnchor } from '@/lib/data';
+import { getPart, getSection, getSectionsList, getAllSectionSlugs, slugToSectionId, partNumFromSectionSlug, articleAnchor } from '@/lib/data';
 import { Subsection, Article, Sentence, CodeTable as CodeTableType } from '@/lib/types';
 import CodeTable from '@/components/CodeTable';
+import CodeText from '@/components/CodeText';
+import RelatedArticles from '@/components/RelatedArticles';
 
 interface Props {
   params: { partSlug: string; sectionSlug: string };
@@ -114,12 +116,12 @@ export default function SectionPage({ params }: Props) {
                             <div key={sentence.number}>
                               <p>
                                 <span className="font-semibold text-slate-400 mr-1.5 select-none">({sentence.number})</span>
-                                {sentence.text}
+                                <CodeText text={sentence.text} />
                               </p>
                               {sentence.clauses && sentence.clauses.length > 0 && (
                                 <ul className="mt-1.5 space-y-1 ml-6">
                                   {sentence.clauses.map((clause: string, ci: number) => (
-                                    <li key={ci} className="text-slate-700">{clause}</li>
+                                    <li key={ci} className="text-slate-700"><CodeText text={clause} /></li>
                                   ))}
                                 </ul>
                               )}
@@ -147,12 +149,47 @@ export default function SectionPage({ params }: Props) {
                           ))}
                         </div>
                       )}
+
+                      {article.relatedArticles && article.relatedArticles.length > 0 && (
+                        <RelatedArticles ids={article.relatedArticles} />
+                      )}
                     </div>
                   ))}
                 </div>
               </div>
             ))}
           </div>
+
+          {/* ── Prev / next section ── */}
+          {(() => {
+            const sections = getSectionsList(partNum);
+            const idx = sections.findIndex((s) => s.id === section.id);
+            const prev = idx > 0 ? sections[idx - 1] : null;
+            const next = idx >= 0 && idx < sections.length - 1 ? sections[idx + 1] : null;
+            if (!prev && !next) return null;
+            return (
+              <nav className="mt-12 pt-6 border-t border-slate-200 flex justify-between gap-4 text-sm">
+                {prev ? (
+                  <Link href={`/part-${part.part}/${prev.slug}/`}
+                        className="group max-w-[45%] text-left">
+                    <span className="block text-xs text-slate-400 mb-0.5">← Previous</span>
+                    <span className="text-blue-600 group-hover:text-blue-800 group-hover:underline">
+                      {prev.id} {prev.title}
+                    </span>
+                  </Link>
+                ) : <span />}
+                {next ? (
+                  <Link href={`/part-${part.part}/${next.slug}/`}
+                        className="group max-w-[45%] text-right">
+                    <span className="block text-xs text-slate-400 mb-0.5">Next →</span>
+                    <span className="text-blue-600 group-hover:text-blue-800 group-hover:underline">
+                      {next.id} {next.title}
+                    </span>
+                  </Link>
+                ) : <span />}
+              </nav>
+            );
+          })()}
         </div>
       </div>
     </div>

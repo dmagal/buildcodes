@@ -138,6 +138,69 @@ export function getSearchList(): ArticleSearchResult[] {
   return results;
 }
 
+// ── Cross-reference resolution ────────────────────────────────────────────────
+// Maps every part/section/subsection/article/table id to its page URL so that
+// in-text references ("conforms to Article 9.14.4.1.") can be hyperlinked.
+// Keys are bare ids ("9", "9.14", "9.14.3", "9.14.3.1") — segment count makes
+// them collision-free. Tables share digits with their parent article, so they
+// get a "table:" prefix and link to the containing article's anchor.
+
+export interface RefTarget {
+  url: string;
+  title: string;
+}
+
+let _refMap: Map<string, RefTarget> | null = null;
+
+function getRefMap(): Map<string, RefTarget> {
+  if (_refMap) return _refMap;
+
+  const map = new Map<string, RefTarget>();
+  for (const part of getParts()) {
+    map.set(part.part, { url: `/part-${part.part}/`, title: part.partTitle });
+    for (const sec of part.sections) {
+      const base = `/part-${part.part}/${sectionSlug(sec.id, sec.title)}/`;
+      map.set(sec.id, { url: base, title: sec.title });
+      for (const sub of sec.subsections) {
+        map.set(sub.id, {
+          url: `${base}#sub-${sub.id.replace(/\./g, '-')}`,
+          title: sub.title,
+        });
+        for (const article of sub.articles ?? []) {
+          const articleUrl = `${base}#${articleAnchor(article.id)}`;
+          map.set(article.id, { url: articleUrl, title: article.title });
+          for (const table of article.tables ?? []) {
+            const tableId = (table.id ?? '').replace(/^Table\s+/i, '').replace(/\.$/, '');
+            if (tableId) {
+              map.set(`table:${tableId}`, { url: articleUrl, title: table.title || article.title });
+            }
+          }
+        }
+      }
+    }
+  }
+
+  _refMap = map;
+  return map;
+}
+
+// Resolve a reference id from code text to its URL, or undefined if the
+// target doesn't exist in the dataset (never emit broken links).
+// "9.14.3." → subsection · "Table 9.10.3.1.-A" → pass kind 'table'.
+export function resolveRef(id: string, kind?: 'table'): RefTarget | undefined {
+  const map = getRefMap();
+  const clean = id.replace(/\.$/, '');
+  if (kind === 'table') {
+    return (
+      map.get(`table:${clean}`) ??
+      // "9.10.3.1.-A" → containing article "9.10.3.1"
+      map.get(`table:${clean.replace(/\.?-[A-Z]\d*$/, '')}`) ??
+      map.get(clean.replace(/\.?-[A-Z]\d*$/, ''))
+    );
+  }
+  return map.get(clean);
+}
+
 // ── Static path generation (used by Next.js dynamic routes) ──────────────────
 
 export function getAllPartSlugs(): string[] {

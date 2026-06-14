@@ -4,7 +4,7 @@ import Script from 'next/script';
 import './globals.css';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://buildcodes.ca'),
+  metadataBase: new URL('https://www.buildcodes.ca'),
   alternates: {
     canonical: './',
   },
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     'A fast, searchable, plain-English guide to the 2024 Ontario Building Code. Find any requirement by section number, topic, or keyword.',
   openGraph: {
     siteName: 'BuildCodes.ca',
-    url: 'https://buildcodes.ca',
+    url: 'https://www.buildcodes.ca',
   },
   verification: {
     google: 'BpbgAOMvfibYQWdmOMic6NeYQl4vESnoozRl169joT4',

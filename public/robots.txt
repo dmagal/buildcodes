@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /search
 
-Sitemap: https://buildcodes.ca/sitemap.xml
+Sitemap: https://www.buildcodes.ca/sitemap.xml
